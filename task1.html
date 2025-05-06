@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Styled Webpage</title>
+  <style>
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      background-color: #558a7e;
+      color: #fcfbfb;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #d7d7d8;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    main {
+      padding: 40px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    h1, h2 {
+      color: #ffffff;
+    }
+
+    p {
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    a {
+      color: #fdfdfd;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .button {
+      display: inline-block;
+      background-color: #28a745;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+<center>
+  <header>
+    <h1>Welcome to My Webpage</h1>
+  </header>
+
+  <main>
+    <h2>About This Page</h2>
+    <p>This is a simple webpage example.</p>
+
+    <h2>Sample Image</h2>
+    <img src="C:\Users\Lenovo\Downloads\apeximage.jpeg" alt="Sample Image" />
+
+    <h2>Useful Links</h2>
+    <p>Check out <a href="https://apexplanet.in/" target="_blank">APEXPLANET WEBSITE</a> for interships.</p>
+
+    <h2>Click the Button</h2>
+    <button class="button" onclick="showAlert()">Click Me!</button>
+  </main>
+
+  <script>
+    function showAlert() {
+      alert("Hello!");
+    }
+  </script>
+</center>
+</body>
+</html>
