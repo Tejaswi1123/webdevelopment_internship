@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MyGlam Clone - Dynamic E-commerce Beauty Store</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #fff8f9;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    /* Common button style */
+    button {
+      cursor: pointer;
+      border-radius: 5px;
+      border: none;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+
+    /* Login/Signup Form Styles */
+    #login-page {
+      background: white;
+      padding: 2rem 2.5rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(216, 27, 96, 0.15);
+      max-width: 320px;
+      width: 100%;
+      text-align: center;
+    }
+    #login-page h2 {
+      color: #d81b60;
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+    }
+    #login-page input[type="text"],
+    #login-page input[type="password"] {
+      width: 100%;
+      padding: 0.65rem 0.8rem;
+      margin-bottom: 1.2rem;
+      font-size: 1rem;
+      border: 1.5px solid #d81b60;
+      border-radius: 30px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    #login-page input[type="text"]:focus,
+    #login-page input[type="password"]:focus {
+      border-color: #b3154c;
+    }
+    #login-btn, #signup-btn {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.4rem 0;
+      font-size: 1.1rem;
+      border-radius: 30px;
+      color: white;
+      background-color: #d81b60;
+    }
+    #login-btn:hover, #signup-btn:hover {
+      background-color: #b3154c;
+    }
+    #password-error {
+      color: red;
+      min-height: 1.2rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    /* Main site styles, hidden initially until logged in */
+    #main-site {
+      display: none;
+      width: 100%;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+
+    body.logged-in {
+      display: block;
+    }
+
+    header {
+      background-color: #fce4ec;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: #d81b60;
+      letter-spacing: 2px;
+      cursor: default;
+      user-select: none;
+    }
+
+    .cart-btn,
+    .wishlist-btn {
+      position: relative;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: #d81b60;
+      font-size: 1.6rem;
+      margin-right: 1rem;
+      user-select: none;
+    }
+
+    .cart-count,
+    .wishlist-count {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #d81b60;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 50%;
+      padding: 2px 6px;
+      display: none;
+      user-select: none;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 2rem auto 3rem;
+      padding: 0 1rem;
+    }
+
+    .hero {
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80') center/cover no-repeat;
+      border-radius: 10px;
+      color: white;
+      padding: 4rem 2rem;
+      margin-bottom: 3rem;
+      text-align: center;
+      box-shadow: inset 0 0 0 1000px rgba(216, 27, 96, 0.6);
+      user-select: none;
+    }
+
+    .hero h1 {
+      font-size: 3.2rem;
+      margin: 0 0 1rem;
+      text-shadow: 0 2px 7px rgba(0, 0, 0, 0.4);
+    }
+
+    .hero p {
+      font-size: 1.4rem;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      text-shadow: 0 2px 7px rgba(0, 0, 0, 0.4);
+    }
+
+    .hero button {
+      background-color: #d81b60;
+      border: none;
+      padding: 0.8rem 2rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      border-radius: 30px;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 5px 12px rgba(216, 27, 96, 0.6);
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+
+    .hero button:hover {
+      background-color: #b3154c;
+    }
+
+    .filters-container {
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      min-width: 160px;
+    }
+
+    .filter-label {
+      font-weight: 600;
+      color: #d81b60;
+      margin-bottom: 0.3rem;
+    }
+
+    .filter-input,
+    .filter-select {
+      padding: 0.5rem 0.75rem;
+      border: 1.5px solid #d81b60;
+      border-radius: 30px;
+      font-size: 1rem;
+      outline: none;
+      width: 160px;
+      transition: border-color 0.3s ease;
+    }
+
+    .filter-input:focus,
+    .filter-select:focus {
+      border-color: #b3154c;
+    }
+
+    .search-container {
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .search-input {
+      width: 100%;
+      max-width: 400px;
+      font-size: 1rem;
+      padding: 0.65rem 1rem;
+      border-radius: 30px;
+      border: 1.5px solid #d81b60;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .search-input:focus {
+      border-color: #b3154c;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2rem;
+      user-select: none;
+    }
+
+    .product {
+      background: white;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+
+    .product:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(216, 27, 96, 0.3);
+    }
+
+    .product img {
+      width: 100%;
+      border-radius: 10px;
+      object-fit: cover;
+      user-select: none;
+    }
+
+    .product-info {
+      margin-top: 1rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .product-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #d81b60;
+      margin-bottom: 0.3rem;
+      min-height: 50px;
+    }
+
+    .product-rating {
+      color: #f06292;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .product-price {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #444;
+      margin-bottom: 0.8rem;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .add-btn,
+    .wishlist-btn-product {
+      background-color: #d81b60;
+      color: white;
+      border: none;
+      padding: 0.5rem 0.75rem;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      flex-grow: 1;
+      text-align: center;
+      user-select: none;
+    }
+
+    .add-btn:hover,
+    .wishlist-btn-product:hover {
+      background-color: #b3154c;
+    }
+
+    .wishlist-btn-product.active {
+      background-color: #9b144f;
+    }
+
+    /* Cart Sidebar */
+    .cart-sidebar {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 350px;
+      height: 100%;
+      background: #fff;
+      box-shadow: -6px 0 15px rgba(0, 0, 0, 0.1);
+      padding: 2rem 1.5rem;
+      transition: right 0.4s ease;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    .cart-sidebar.open {
+      right: 0;
+    }
+
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #f3f3f3;
+      padding-bottom: 0.5rem;
+    }
+
+    .cart-header h2 {
+      margin: 0;
+      color: #d81b60;
+    }
+
+    .close-cart {
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      cursor: pointer;
+      color: #d81b60;
+    }
+
+    .cart-items {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+
+    .cart-item {
+      display: flex;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 1rem;
+    }
+
+    .cart-item img {
+      width: 60px;
+      height: 60px;
+      border-radius: 10px;
+      object-fit: cover;
+      margin-right: 1rem;
+    }
+
+    .cart-item-details {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .cart-item-title {
+      font-weight: 600;
+      color: #d81b60;
+      font-size: 1rem;
+    }
+
+    .cart-item-qty {
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    .cart-item-price {
+      font-weight: 700;
+      color: #333;
+    }
+
+    .remove-btn {
+      background: none;
+      border: none;
+      color: #d81b60;
+      font-weight: 900;
+      font-size: 1.2rem;
+      cursor: pointer;
+      margin-left: 0.5rem;
+    }
+
+    .cart-footer {
+      border-top: 2px solid #f3f3f3;
+      padding-top: 1rem;
+    }
+
+    .cart-total {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #d81b60;
+      margin-bottom: 1rem;
+    }
+
+    .checkout-btn {
+      background-color: #d81b60;
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 1rem;
+      border-radius: 30px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .checkout-btn:hover {
+      background-color: #b3154c;
+    }
+
+    /* Responsive */
+
+    @media (max-width: 600px) {
+      .cart-sidebar {
+        width: 100%;
+        right: -100%;
+      }
+
+      .cart-sidebar.open {
+        right: 0;
+      }
+
+      .filters-container {
+        flex-direction: column;
+        gap: 0.8rem;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login / Signup Form -->
+  <div id="login-page" role="main" aria-label="Login and signup form">
+    <h2>Signup / Signin</h2>
+    <input type="text" id="username" placeholder="Username" aria-label="Username" required autocomplete="username" />
+    <input type="password" id="password" placeholder="Password" aria-label="Password" required autocomplete="current-password" />
+    <button id="login-btn" aria-label="Login">Login</button>
+    <button id="signup-btn" aria-label="Signup">Signup</button>
+    <p id="password-error"></p>
+  </div>
+
+  <!-- Main Beauty Website Content -->
+  <div id="main-site" aria-label="Beauty website content">
+    <header>
+      <div class="logo">MyGlam</div>
+      <button aria-label="Open wishlist" class="wishlist-btn" id="wishlist-btn" title="Open wishlist">
+        ❤️
+        <span class="cart-count" id="wishlist-count">0</span>
+      </button>
+      <button aria-label="Open cart" class="cart-btn" id="cart-btn" title="Open cart">
+        🛒
+        <span class="cart-count" id="cart-count">0</span>
+      </button>
+      <button id="logout-btn" style="background:none; border:none; color:#d81b60; font-weight:700; font-size:1rem; cursor:pointer;" title="Logout">Logout</button>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1>Discover Your Beauty</h1>
+        <p>Explore premium cosmetics, skincare, and more curated just for you.</p>
+        <button id="shop-now-btn">Shop Now</button>
+      </section>
+
+      <div class="search-container">
+        <input
+          type="search" 
+          id="search-input"
+          class="search-input"
+          placeholder="Search products..."
+          aria-label="Search products"
+        />
+      </div>
+
+      <div class="filters-container" aria-label="Product filters">
+        <div class="filter-group">
+          <label for="price-filter-min" class="filter-label">Price Min (₹)</label>
+          <input type="number" id="price-filter-min" class="filter-input" min="0" step="1" placeholder="Min price" aria-label="Minimum price filter" />
+        </div>
+        <div class="filter-group">
+          <label for="price-filter-max" class="filter-label">Price Max (₹)</label>
+          <input type="number" id="price-filter-max" class="filter-input" min="0" step="1" placeholder="Max price" aria-label="Maximum price filter" />
+        </div>
+        <div class="filter-group">
+          <label for="rating-filter" class="filter-label">Min Customer Rating</label>
+          <select id="rating-filter" class="filter-select" aria-label="Minimum customer rating filter">
+            <option value="0">All Ratings</option>
+            <option value="1">1 Star & Up</option>
+            <option value="2">2 Stars & Up</option>
+            <option value="3">3 Stars & Up</option>
+            <option value="4">4 Stars & Up</option>
+            <option value="5">5 Stars Only</option>
+          </select>
+        </div>
+      </div>
+
+      <section class="products-grid" id="products-grid" aria-live="polite" aria-relevant="all">
+        <!-- Products will be dynamically inserted here -->
+      </section>
+    </main>
+
+    <aside class="cart-sidebar" id="cart-sidebar" aria-label="Shopping cart" tabindex="0">
+      <div class="cart-header">
+        <h2>Your Cart</h2>
+        <button aria-label="Close cart" class="close-cart" id="close-cart">×</button>
+      </div>
+      <div class="cart-items" id="cart-items" tabindex="0">
+        <!-- Cart items will appear here -->
+      </div>
+      <div class="cart-footer">
+        <div class="cart-total" id="cart-total">Total: ₹0.00</div>
+        <button class="checkout-btn" id="checkout-btn">Checkout</button>
+      </div>
+    </aside>
+
+    <aside class="cart-sidebar" id="wishlist-sidebar" aria-label="Wishlist" tabindex="0" style="right: -400px;">
+      <div class="cart-header">
+        <h2>Your Wishlist</h2>
+        <button aria-label="Close wishlist" class="close-cart" id="close-wishlist">×</button>
+      </div>
+      <div class="cart-items" id="wishlist-items" tabindex="0">
+        <!-- Wishlist items will appear here -->
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    // Auth and UI control
+    const loginPage = document.getElementById('login-page');
+    const mainSite = document.getElementById('main-site');
+    const loginBtn = document.getElementById('login-btn');
+    const signupBtn = document.getElementById('signup-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+    const passwordError = document.getElementById('password-error');
+
+    function showLoginPage() {
+      loginPage.style.display = 'block';
+      mainSite.style.display = 'none';
+      document.body.style.justifyContent = 'center';
+      document.body.style.alignItems = 'center';
+      document.body.style.minHeight = '100vh';
+      passwordError.style.display = 'none';
+      passwordError.textContent = '';
+    }
+
+    function showMainSite() {
+      loginPage.style.display = 'none';
+      mainSite.style.display = 'flex';
+      mainSite.style.flexDirection = 'column';
+      document.body.style.justifyContent = 'normal';
+      document.body.style.alignItems = 'normal';
+      document.body.style.minHeight = 'auto';
+      passwordError.style.display = 'none';
+      passwordError.textContent = '';
+    }
+
+    // Strong password validator: minimum 8 chars, at least one uppercase, one lowercase, one digit, one special char
+    function isStrongPassword(password) {
+      const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=\[\]{};:'",.<>/?\\|`~])[A-Za-z\d!@#$%^&*()_\-+=\[\]{};:'",.<>/?\\|`~]{8,}$/;
+      return regex.test(password);
+    }
+
+    // Check login status on load
+    function checkLogin() {
+      const loggedInUser = localStorage.getItem('myglamLoggedInUser');
+      if (loggedInUser) {
+        showMainSite();
+      } else {
+        showLoginPage();
+      }
+    }
+
+    checkLogin();
+
+    loginBtn.addEventListener('click', () => {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      if (!username || !password) {
+        passwordError.style.display = 'block';
+        passwordError.textContent = 'Please enter both username and password.';
+        return;
+      }
+
+      // Retrieve users from localStorage
+      let users = localStorage.getItem('myglamUsers');
+      users = users ? JSON.parse(users) : {};
+
+      if (users[username] && users[username] === password) {
+        // Login successful
+        localStorage.setItem('myglamLoggedInUser', username);
+        showMainSite();
+        init(); // initialize main site features
+        passwordError.style.display = 'none';
+        passwordError.textContent = '';
+      } else {
+        // Login failed
+        passwordError.style.display = 'block';
+        passwordError.textContent = 'Incorrect username or password.';
+      }
+    });
+
+    signupBtn.addEventListener('click', () => {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      if (!username || !password) {
+        passwordError.style.display = 'block';
+        passwordError.textContent = 'Please enter both username and password.';
+        return;
+      }
+
+      if (!isStrongPassword(password)) {
+        passwordError.style.display = 'block';
+        passwordError.textContent = 'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.';
+        return;
+      }
+
+      // Retrieve users from localStorage
+      let users = localStorage.getItem('myglamUsers');
+      users = users ? JSON.parse(users) : {};
+
+      if (users[username]) {
+        passwordError.style.display = 'block';
+        passwordError.textContent = 'Username already exists. Please choose another.';
+        return;
+      }
+
+      // Save new user
+      users[username] = password;
+      localStorage.setItem('myglamUsers', JSON.stringify(users));
+      passwordError.style.display = 'none';
+      passwordError.textContent = '';
+      alert('Signup successful! You can now login.');
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('myglamLoggedInUser');
+      location.reload();
+    });
+
+    // Main site functionality below - slightly modified from provided
+
+    // Currency conversion rate USD to INR
+    const USD_TO_INR = 82;
+
+    // Simulate fetching products dynamically (e.g. from an API)
+    function fetchProducts() {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          resolve([
+            {id: 1, title: "Radiant Glow Face Serum", price: 29.99, image: "https://th.bing.com/th/id/R.c105cc9d3481bc91e442f7c03e4bf19e?rik=hqs%2fllpp9bcTaA&riu=http%3a%2f%2fcdn.shopify.com%2fs%2ffiles%2f1%2f0567%2f0436%2f8789%2fproducts%2fIMG_1734_1200x.jpg%3fv%3d1633496123&ehk=R65MyhULtDYarmjTIdV7rz8yWHtSDyrdaEkEiyM9FDo%3d&risl=&pid=ImgRaw&r=0", rating: 4},
+            {id: 2, title: "Luxe Lipstick Set", price: 45.00, image: "https://th.bing.com/th/id/OIP.ZNPIva41MORhDIMXTE91uQHaG3?rs=1&pid=ImgDetMain", rating: 5},
+            {id: 3, title: "Velvet Matte Eyeshadow Palette", price: 39.50, image: "https://i.pinimg.com/originals/94/ce/6d/94ce6ddf2e884b199323496effdd9d6a.jpg", rating: 3},
+            {id: 4, title: "Pure Glow Highlighter", price: 22.75, image: "https://i1.wp.com/beautynook.ie/wp-content/uploads/2017/05/PS-Pure-Glow-Highlighter-Powder-Palette_9651.jpg?resize=1500%2C1000&is-pending-load=1#038;ssl=1", rating: 4},
+            {id: 5, title: "Nourishing Body Lotion", price: 18.99, image: "https://th.bing.com/th/id/OIP.KE5DfZ5YgF-e-44gz_lOHQHaHa?rs=1&pid=ImgDetMain", rating: 4},
+            {id: 6, title: "Hydrating Face Mist", price: 15.50, image: "https://th.bing.com/th/id/OIP.x8O2lzgRiB5CerByMU0_oQHaJQ?pid=ImgDet&w=474&h=592&rs=1s", rating: 2},
+            {id: 7, title: "Blush Compact", price: 19.90, image: "https://m.media-amazon.com/images/I/71+Gy3wh1FL._SL1500_.jpg", rating: 4},
+            {id: 8, title: "Luxury Foundation", price: 33.00, image: "https://editorialist.com/wp-content/uploads/2022/02/Best_High_End_Foundations_Hero-1.jpg", rating: 5},
+            {id: 9, title: "Satin Lip Balm", price: 12.95, image: "https://cdn.fynd.com/v2/falling-surf-7c8bb8/fyprod/wrkr/products/pictures/item/free/original/000000000494280308/-PNiRnv6mS-000000000494280308_6.jpg", rating: 3},
+            {id: 10, title: "Silky Eye Primer", price: 18.00, image: "https://th.bing.com/th/id/OIP.9IcB193E-UAMKxqAPuXSFgAAAA?w=400&h=400&rs=1&pid=ImgDetMain", rating: 4},
+            {id: 11, title: "Glossy Lip Tint", price: 14.75, image: "https://i.pinimg.com/736x/e0/49/34/e0493448e3fcfa88166c2a029daeb1c6.jpg", rating: 3},
+            {id: 12, title: "Revitalizing Night Cream", price: 55.00, image: "https://lyko.com/globalassets/product-images/min-24h-revitalizing-night-cream-50ml-2854-103-0050_2.jpg?ref=880300&w=960&h=960&mode=max&quality=75&format=jpg", rating: 5},
+            {id: 13, title: "Matte Liquid Eyeliner", price: 19.99, image: "https://www.dhresource.com/0x0/f2/albu/g13/M01/1D/E4/rBVakl9R0xiAJP5iAALoVShHEbI038.jpg/color-liquid-eyeliner-double-head-seal-glitter.jpg", rating: 4},
+            {id: 14, title: "Natural Blush Stick", price: 13.49, image: "https://th.bing.com/th/id/OIP.KRAX-fPLy3Xt1xQNwcYcaQHaHa?rs=1&pid=ImgDetMain", rating: 2},
+            {id: 15, title: "Cooling Facial Mask", price: 20.00, image: "https://m.media-amazon.com/images/I/81WZ2-m9uxL._AC_SL1500_.jpg", rating: 4},
+            {id: 16, title: "Golden Bronzer", price: 25.00, image: "https://th.bing.com/th/id/R.b8e25227db7d5972309c3d09709e6501?rik=3h5uDi%2fXnoRy6w&riu=http%3a%2f%2f3.bp.blogspot.com%2f-9yGzvRbqaYw%2fVcvWWUoYxTI%2fAAAAAAAABUM%2fHogX0YhI-28%2fs1600%2felfgoldenbronzermirror.jpg&ehk=2gO4NI8rCLTWF1kLa5YvVRIIiuU%2bhwh1j2BijYYYXi4%3d&risl=&pid=ImgRaw&r=0", rating: 4},
+            {id: 17, title: "Silk Hair Serum", price: 30.00, image: "https://1.bp.blogspot.com/-V8nZ2cWnJs8/XYolJskSixI/AAAAAAAA8xQ/OR5r6ysak1QpP6CqDN9WOA3uRK9EvCx3gCLcBGAsYHQ/s1600/Maple%2BHolistics%2BSilk%2B18%2BConditioner.JPG", rating: 4},
+            {id: 18, title: "Refresh Facial Toner", price: 17.00, image: "https://lzd-img-global.slatic.net/g/p/17b0974a400a938b61262116d9c3711a.jpg_720x720q80.jpg", rating: 3},
+            {id: 19, title: "Moisturizing Lip Scrub", price: 9.99, image: "https://m.media-amazon.com/images/I/71DDJyklBtL.jpg", rating: 3},
+            {id: 20, title: "Luminous Eye Cream", price: 42.00, image: "https://images-eu.nivea.com/-/media/miscellaneous/media-center-items/d/3/d/01af970d630d49f880bfeab713225e4d-web_1010x1180_transparent_png.png?rx=0&ry=309&rw=1010&rh=560&hash=9515DE423F5B1FAB69426630B44FCED2", rating: 5},
+            {id: 21, title: "Nail Care Set", price: 27.25, image: "https://i5.walmartimages.com/asr/bdbc891f-75c4-47e8-bc1e-246c3e4cefc8.7cce0e52c7ebd5f40337ba1fbd30aa8e.jpeg", rating: 4},
+            {id: 22, title: "Velvet Lipstick Matte", price: 34.50, image: "https://th.bing.com/th/id/OIP.M4rkAT1mWWDfySpP-6n8NgAAAA?rs=1&pid=ImgDetMain", rating: 5},
+            {id: 23, title: "Aromatic Body Wash", price: 20.99, image: "https://th.bing.com/th/id/R.764b1ac4fca3e69fb060c2c56eab656a?rik=qUjXvQch1%2bMFOg&riu=http%3a%2f%2faromaticgardenessence.com%2fcdn%2fshop%2ffiles%2f02_94f00281-9a9f-407e-ac10-e603af054010_1200x1200.jpg%3fv%3d1713788673&ehk=Wh876NXcVoCH9fMSm%2bvuPG1rkXf3Sjdj9eADUEuqKGo%3d&risl=&pid=ImgRaw&r=0", rating: 3},
+            {id: 24, title: "Intense Volume Mascara", price: 23.00, image: "https://th.bing.com/th/id/OIP.9Rts72iOXklcdIO5FxMKewHaHa?rs=1&pid=ImgDetMain", rating: 4},
+            {id: 25, title: "Rosehip Facial Oil", price: 28.00, image: "https://5.imimg.com/data5/SELLER/Default/2023/11/361635681/LW/VK/TB/202912704/nature-glow-rosehip-facial-oil-15ml-500x500.png", rating: 4},
+            {id: 26, title: "Peony Scented Candle", price: 18.00, image: "https://i.pinimg.com/736x/73/73/b7/7373b70862fded16feed58290a46d721.jpg", rating: 2},
+            {id: 27, title: "Charcoal Face Scrub", price: 16.50, image: "https://th.bing.com/th/id/OIP.bKQY8CRaWjl3ti4wHraDlAHaHa?rs=1&pid=ImgDetMain", rating: 3},
+            {id: 28, title: "Gleaming High Gloss", price: 21.75, image: "https://productimages.hepsiburada.net/s/457/550/110000493022026.jpg", rating: 3},
+            {id: 29, title: "Moisturizing Hand Cream", price: 15.00, image: "https://i5.walmartimages.com/asr/a608972e-7d15-48ea-bbad-2d55d7e817a4.b32254dc16d15b1f7382b513eba56c4c.jpeg", rating: 4},
+            {id: 30, title: "Coconut Hair Mask", price: 26.00, image: "https://i5.walmartimages.com/asr/804430e4-0ed1-4bcb-924d-ff9f37a51488.e4f95b6311b05a5aebf5e704230b5779.png", rating: 4},
+            {id: 31, title: "Clear Skin Toner", price: 19.99, image: "https://i5.walmartimages.com/asr/d4e900fd-b200-4602-87e6-ee117e7391db_1.d1007a1b9678881b095703f840aa2cdf.jpeg?odnWidth=1000&odnHeight=1000&odnBg=ffffff", rating: 4},
+            {id: 32, title: "Hydrating Day Cream", price: 30.25, image: "https://th.bing.com/th/id/OIP.F_JcuGhMyqlD1FJ1eF88AQHaFa?rs=1&pid=ImgDetMain", rating: 4},
+            {id: 33, title: "Classic Red Lipstick", price: 25.00, image: "https://demotix.com/wp-content/uploads/2018/12/Charlotte-Tillbury-in-Red-Carpet-Red.jpg", rating: 3},
+            {id: 34, title: "Exfoliating Foot Scrub", price: 12.50, image: "https://th.bing.com/th/id/OIP.4OYv-LFNYbBYIK38L3IrrQHaJG?rs=1&pid=ImgDetMain", rating: 3},
+            {id: 35, title: "Scented Body Oil", price: 21.50, image: "https://i.pinimg.com/originals/1b/77/0c/1b770c6405af8c05804e9d244f49b9fa.jpg", rating: 2},
+            {id: 36, title: "Sheer Lip Gloss", price: 13.00, image: "https://image.influenster.com/eyJlZGl0cyI6IHsicmVzaXplIjogeyJoZWlnaHQiOiA3NTAsICJ3aWR0aCI6IDc1MCwgIndpdGhvdXRFbmxhcmdlbWVudCI6IHRydWUsICJiYWNrZ3JvdW5kIjogeyJyIjogMSwgImIiOiAxLCAiYWxwaGEiOiAwLCAiZyI6IDF9LCAiZml0IjogImluc2lkZSJ9fSwgImJ1Y2tldCI6ICJpbmZsdWVuc3Rlcl9wcm9kdWN0aW9uIiwgImtleSI6ICJtZWRpYS9wcm9kdWN0L2ltYWdlL3Byb2R1Y3QvaW1hZ2UvOWU1MDA5NzdkZTJiMWRhYjMzZmI3MDVmMjlkMDkxMWQwLmpwZyIsICJleHRlbmQiOiB7fX0=", rating: 3},
+            {id: 37, title: "Gentle Makeup Remover", price: 23.00, image: "https://th.bing.com/th/id/R.e78902e67efab5c2a715bd87d7efb67d?rik=6%2bCemsAE%2be%2bejg&riu=http%3a%2f%2fwww.narscosmetics.com%2fon%2fdemandware.static%2f-%2fSites-itemmaster_NARS%2fdefault%2fdw21639055%2fhi-res%2f0607845022503.jpg&ehk=193dLDA02T6%2bnnveMAm20Zjz%2bZsbvMq5dS2MVS1DpmM%3d&risl=&pid=ImgRaw&r=0", rating: 4},
+            {id: 38, title: "Vitamin C Serum", price: 40.00, image: "https://th.bing.com/th/id/OIP.ZtO4tLVq-_l3w45tQTSGXgHaHa?rs=1&pid=ImgDetMain", rating: 5},
+            {id: 39, title: "Soft Glow Bronzer", price: 28.95, image: "https://th.bing.com/th/id/OIP.Oqlq8ZmEn1Dni5vySMLXEgHaHa?rs=1&pid=ImgDetMain", rating: 4},
+            {id: 40, title: "Refreshing Face Wash", price: 18.25, image: "https://th.bing.com/th/id/OIP.mqeVqXIaqQzzVkk69JSJ_gHaLG?rs=1&pid=ImgDetMain", rating: 3},
+            {id: 41, title: "Rose Water Toner", price: 19.50, image: "https://www.thenaturalwash.com/cdn/shop/products/product_ingredients_22.jpg?v=1677754317", rating: 3},
+            {id: 42, title: "Pink Blush Powder", price: 16.00, image: "https://www.brit.co/media-library/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpbWFnZSI6Imh0dHBzOi8vYXNzZXRzLnJibC5tcy8yMDg3MzUwMC9vcmlnaW4uanBnIiwiZXhwaXJlc19hdCI6MTY3NDE2NDA1Nn0.vooJQ-NIcR4NM8Hh_0G2LIKqvXtYrt4hScYXWgSMs_8/image.jpg?width=980", rating: 2},
+            {id: 43, title: "Lip Plumper", price: 22.00, image: "https://stylecaster.com/wp-content/uploads/2016/06/Too-Faced-Lip-Injection-Extreme-Lip-Plumper.jpg?resize=41", rating: 3},
+            {id: 44, title: "Deep Conditioning Mask", price: 29.50, image: "https://th.bing.com/th/id/R.336340769be5aa35072ccba353ca7bf3?rik=n9NpkgqlIk42mQ&riu=http%3a%2f%2fcdn.shopify.com%2fs%2ffiles%2f1%2f0127%2f6792%2f0218%2fproducts%2fpantene-truly-natural-strengthening-deep-conditioning-mask-not-specified-hair-care-1-7oz-38709128691942.png%3fv%3d1668085341&ehk=v0%2bOO3sbiVIzUXHnHHuH7NctYOue%2b1I8lRXrdENsd4g%3d&risl=&pid=ImgRaw&r=0", rating: 4},
+            {id: 45, title: "Moisture Boost Gel", price: 24.00, image: "https://www.thehomeexpo.net/cdn/shop/files/JOYHYDRARESTOREMOISTUREBOOSTGELFRESHROSE.jpg?v=1715450146", rating: 4},
+            {id: 46, title: "Night Repair Cream", price: 49.99, image: "https://i.pinimg.com/originals/50/98/3e/50983e37d9ba0040aa25113774cc0a50.jpg", rating: 5},
+            {id: 47, title: "Matte Lipstick", price: 26.50, image: "https://www.revolutionbeauty.com/dw/image/v2/BCZJ_PRD/on/demandware.static/-/Sites-revbe-master-catalog/default/dw626686db/images/hi-res/Matte-Lipstick-Op1.jpg", rating: 4},
+            {id: 48, title: "Soft Touch Powder", price: 20.00, image: "https://www.rarebeauty.com/cdn/shop/files/EVERGREEN-STYLIZED-TRUE-TO-MYSELF-TINTED-PRESSED-FINISHING-POWDER-PUFF.jpg?v=1719970819", rating: 3},
+            {id: 49, title: "Soothing Eye Gel", price: 27.00, image: "https://i.pinimg.com/originals/51/1d/06/511d06f1fe7959a3ccdfe7d9e6721d6e.jpg", rating: 4},
+            {id: 50, title: "Fresh Citrus Body Scrub", price: 19.00, image: "https://i.pinimg.com/originals/3c/a7/8e/3ca78e034cc3c8fbad46b70cc87f927a.png", rating: 3},
+          ]);
+        }, 500);
+      });
+    }
+
+    const productsGrid = document.getElementById('products-grid');
+    const cartBtn = document.getElementById('cart-btn');
+    const cartCount = document.getElementById('cart-count');
+    const cartSidebar = document.getElementById('cart-sidebar');
+    const closeCartBtn = document.getElementById('close-cart');
+    const cartItemsContainer = document.getElementById('cart-items');
+    const cartTotalElem = document.getElementById('cart-total');
+    const checkoutBtn = document.getElementById('checkout-btn');
+    const shopNowBtn = document.getElementById('shop-now-btn');
+    const searchInput = document.getElementById('search-input');
+
+    // Wishlist elements
+    const wishlistBtn = document.getElementById('wishlist-btn');
+    const wishlistCount = document.getElementById('wishlist-count');
+    const wishlistSidebar = document.getElementById('wishlist-sidebar');
+    const closeWishlistBtn = document.getElementById('close-wishlist');
+    const wishlistItemsContainer = document.getElementById('wishlist-items');
+
+    // Filter inputs
+    const priceMinInput = document.getElementById('price-filter-min');
+    const priceMaxInput = document.getElementById('price-filter-max');
+    const ratingFilterSelect = document.getElementById('rating-filter');
+
+    let products = [];
+    let filteredProducts = [];
+    const cart = {};
+    const wishlist = {};
+
+    // Load cart from localStorage
+    function loadCart() {
+      const savedCart = localStorage.getItem('myglamCart');
+      if (savedCart) {
+        try {
+          const parsed = JSON.parse(savedCart);
+          for (const id in parsed) {
+            cart[id] = parsed[id];
+          }
+        } catch (e) {
+          console.error('Error parsing saved cart:', e);
+        }
+      }
+    }
+
+    // Save cart to localStorage
+    function saveCart() {
+      localStorage.setItem('myglamCart', JSON.stringify(cart));
+    }
+
+    // Load wishlist from localStorage
+    function loadWishlist() {
+      const savedWishlist = localStorage.getItem('myglamWishlist');
+      if (savedWishlist) {
+        try {
+          const parsed = JSON.parse(savedWishlist);
+          for (const id in parsed) {
+            wishlist[id] = parsed[id];
+          }
+        } catch (e) {
+          console.error('Error parsing saved wishlist:', e);
+        }
+      }
+    }
+
+    // Save wishlist to localStorage
+    function saveWishlist() {
+      localStorage.setItem('myglamWishlist', JSON.stringify(wishlist));
+    }
+
+    // Convert price from USD to INR and format with Rupee symbol
+    function formatPriceINR(usdPrice) {
+      const inrPrice = usdPrice * USD_TO_INR;
+      return `₹${inrPrice.toFixed(2)}`;
+    }
+
+    // Render products
+    function renderProducts() {
+      productsGrid.innerHTML = '';
+      if (filteredProducts.length === 0) {
+        productsGrid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:#999;">No products found.</p>';
+        return;
+      }
+      filteredProducts.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product';
+        card.setAttribute('tabindex', '0');
+
+        const isWishlisted = wishlist[product.id] !== undefined;
+
+        card.innerHTML = `
+          <img src="${product.image}" alt="${product.title}" loading="lazy" />
+          <div class="product-info">
+            <div>
+              <div class="product-title">${product.title}</div>
+              <div class="product-rating" aria-label="${product.rating} star rating">${'★'.repeat(product.rating)}${'☆'.repeat(5 - product.rating)}</div>
+              <div class="product-price">${formatPriceINR(product.price)}</div>
+            </div>
+            <div class="btn-group">
+              <button class="add-btn" data-id="${product.id}" aria-label="Add ${product.title} to cart">Add to Cart</button>
+              <button class="wishlist-btn-product ${isWishlisted ? 'active' : ''}" data-id="${product.id}" aria-label="${isWishlisted ? 'Remove from' : 'Add to'} wishlist">${isWishlisted ? '♥ Remove' : '♡ Wishlist'}</button>
+            </div>
+          </div>
+        `;
+
+        productsGrid.appendChild(card);
+      });
+    }
+
+    // Update cart count in header
+    function updateCartCount() {
+      const count = Object.values(cart).reduce((acc, item) => acc + item.qty, 0);
+      cartCount.textContent = count;
+      cartCount.style.display = count > 0 ? 'inline-block' : 'none';
+    }
+
+    // Update wishlist count in header
+    function updateWishlistCount() {
+      const count = Object.keys(wishlist).length;
+      wishlistCount.textContent = count;
+      wishlistCount.style.display = count > 0 ? 'inline-block' : 'none';
+    }
+
+    // Render Cart items
+    function renderCart() {
+      cartItemsContainer.innerHTML = '';
+      let total = 0;
+      for (let id in cart) {
+        const item = cart[id];
+        total += item.price * item.qty;
+
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+          <img src="${item.image}" alt="${item.title}" />
+          <div class="cart-item-details">
+            <div class="cart-item-title">${item.title}</div>
+            <div class="cart-item-qty">Quantity: ${item.qty}</div>
+            <div class="cart-item-price">${formatPriceINR(item.price * item.qty)}</div>
+          </div>
+          <button class="remove-btn" data-id="${id}" title="Remove item">&times;</button>
+        `;
+        cartItemsContainer.appendChild(div);
+      }
+      cartTotalElem.textContent = "Total: " + formatPriceINR(total);
+    }
+
+    // Render Wishlist items
+    function renderWishlist() {
+      wishlistItemsContainer.innerHTML = '';
+      if (Object.keys(wishlist).length === 0) {
+        wishlistItemsContainer.innerHTML = '<p style="color:#999; text-align:center;">Your wishlist is empty.</p>';
+        return;
+      }
+      for (let id in wishlist) {
+        const item = wishlist[id];
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+          <img src="${item.image}" alt="${item.title}" />
+          <div class="cart-item-details">
+            <div class="cart-item-title">${item.title}</div>
+            <div class="cart-item-price">${formatPriceINR(item.price)}</div>
+          </div>
+          <button class="remove-btn" data-id="${id}" title="Remove from wishlist">&times;</button>
+        `;
+        wishlistItemsContainer.appendChild(div);
+      }
+    }
+
+    // Add to cart and wishlist handlers
+    productsGrid.addEventListener('click', e => {
+      if (e.target.classList.contains('add-btn')) {
+        const id = e.target.getAttribute('data-id');
+        const product = products.find(p => p.id == id);
+        if (cart[id]) {
+          cart[id].qty += 1;
+        } else {
+          cart[id] = { ...product, qty: 1 };
+        }
+        updateCartCount();
+        renderCart();
+        saveCart();
+        openCart();
+      } else if (e.target.classList.contains('wishlist-btn-product')) {
+        const id = e.target.getAttribute('data-id');
+        if (wishlist[id]) {
+          delete wishlist[id];
+          e.target.classList.remove('active');
+          e.target.textContent = '♡ Wishlist';
+        } else {
+          const product = products.find(p => p.id == id);
+          wishlist[id] = { ...product };
+          e.target.classList.add('active');
+          e.target.textContent = '♥ Remove';
+        }
+        updateWishlistCount();
+        renderWishlist();
+        saveWishlist();
+      }
+    });
+
+    // Remove from cart
+    cartItemsContainer.addEventListener('click', e => {
+      if (e.target.classList.contains('remove-btn')) {
+        const id = e.target.getAttribute('data-id');
+        delete cart[id];
+        updateCartCount();
+        renderCart();
+        saveCart();
+        if (Object.keys(cart).length === 0) closeCart();
+      }
+    });
+
+    // Remove from wishlist
+    wishlistItemsContainer.addEventListener('click', e => {
+      if (e.target.classList.contains('remove-btn')) {
+        const id = e.target.getAttribute('data-id');
+        delete wishlist[id];
+        updateWishlistCount();
+        renderWishlist();
+        saveWishlist();
+        // Update button in product grid if visible
+        const btn = productsGrid.querySelector(`.wishlist-btn-product[data-id="${id}"]`);
+        if (btn) {
+          btn.classList.remove('active');
+          btn.textContent = '♡ Wishlist';
+        }
+      }
+    });
+
+    // Open/close cart sidebar
+    function openCart() {
+      cartSidebar.classList.add('open');
+      wishlistSidebar.classList.remove('open');
+    }
+    function closeCart() {
+      cartSidebar.classList.remove('open');
+    }
+
+    // Open/close wishlist sidebar
+    function openWishlist() {
+      wishlistSidebar.classList.add('open');
+      cartSidebar.classList.remove('open');
+    }
+    function closeWishlist() {
+      wishlistSidebar.classList.remove('open');
+    }
+
+    // Button events
+    cartBtn.addEventListener('click', () => {
+      if (cartSidebar.classList.contains('open')) {
+        closeCart();
+        onCartToggle(false);
+      } else {
+        openCart();
+        onCartToggle(true);
+      }
+    });
+
+    wishlistBtn.addEventListener('click', () => {
+      if (wishlistSidebar.classList.contains('open')) {
+        closeWishlist();
+      } else {
+        openWishlist();
+      }
+    });
+
+    closeCartBtn.addEventListener('click', () => {
+      closeCart();
+      onCartToggle(false);
+    });
+
+    closeWishlistBtn.addEventListener('click', () => {
+      closeWishlist();
+    });
+
+    checkoutBtn.addEventListener('click', () => {
+      if (Object.keys(cart).length === 0) {
+        alert("Your cart is empty!");
+        return;
+      }
+      alert("Checkout feature is not implemented in this demo.");
+    });
+
+    shopNowBtn.addEventListener('click', () => {
+      window.scrollTo({ top: productsGrid.offsetTop, behavior: 'smooth' });
+    });
+
+    // Filters logic combining search, price, rating
+    function applyFilters() {
+      const searchTerm = searchInput.value.toLowerCase().trim();
+      const priceMin = parseFloat(priceMinInput.value);
+      const priceMax = parseFloat(priceMaxInput.value);
+      const minRating = parseInt(ratingFilterSelect.value, 10);
+
+      filteredProducts = products.filter(p => {
+        const matchesSearch = p.title.toLowerCase().includes(searchTerm);
+        const priceINR = p.price * USD_TO_INR;
+        const matchesPriceMin = isNaN(priceMin) ? true : priceINR >= priceMin;
+        const matchesPriceMax = isNaN(priceMax) ? true : priceINR <= priceMax;
+        const matchesRating = p.rating >= minRating;
+
+        return matchesSearch && matchesPriceMin && matchesPriceMax && matchesRating;
+      });
+
+      renderProducts();
+    }
+
+    // Attach filter event listeners
+    searchInput.addEventListener('input', applyFilters);
+    priceMinInput.addEventListener('input', applyFilters);
+    priceMaxInput.addEventListener('input', applyFilters);
+    ratingFilterSelect.addEventListener('change', applyFilters);
+
+    // Save cart open/close state
+    function onCartToggle(open) {
+      localStorage.setItem('myglamCartOpen', open ? 'true' : 'false');
+    }
+
+    // Initialization of the main site after login
+    async function init() {
+      loadCart();
+      loadWishlist();
+      updateCartCount();
+      updateWishlistCount();
+      products = await fetchProducts();
+      filteredProducts = [...products];
+      renderProducts();
+      renderCart();
+      renderWishlist();
+
+      const wasCartOpen = localStorage.getItem('myglamCartOpen');
+      if (wasCartOpen === 'true') {
+        openCart();
+      }
+    }
+
+    // If user was already logged in, initialize main site features on page load
+    if(localStorage.getItem('myglamLoggedInUser')) {
+      init();
+    }
+  </script>
+</body>
+</html>
